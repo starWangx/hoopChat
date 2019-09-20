@@ -9,11 +9,10 @@ import api from '../../api/api'
 
 let mapInstance = null;
 const pluginProps = {
-  enableHighAccuracy:true,
+  enableHighAccuracy: true,
   timeout: 10000,
   showButton: true
 }
-
 
 
 class Components extends Component {
@@ -21,7 +20,7 @@ class Components extends Component {
     players: [],
     infoWindowLng: '',
     infoWindowLat: '',
-    closeWindow:true,
+    closeWindow: true,
     infoData: null,
 
     mapConfig: {
@@ -83,14 +82,14 @@ class Components extends Component {
 
     this.markerEvents = {
       click: (e) => {
-       let targetData =  e.target.B.extData;
+        let targetData = e.target.B.extData;
         console.log(targetData);
 
         this.setState({
-          infoWindowLng:  targetData.lng,
-          infoWindowLat:  targetData.lat,
-          closeWindow:false,
-          infoData:targetData
+          infoWindowLng: targetData.lng,
+          infoWindowLat: targetData.lat,
+          closeWindow: false,
+          infoData: targetData
         });
 
       }
@@ -140,15 +139,40 @@ class Components extends Component {
           key={player.id}
           extData={player}
           clickable
-          offset={[-28,-10]}
+          offset={[-28, -10]}
           position={[player.lng, player.lat]}
           render={
             <div className='head-border'>
-              <img src={player.headImg||'https://w1.hoopchina.com.cn/images/lrw/manage/userHead.png'} alt="" className='userHead'/>
+              <img src={player.headImg || 'https://w1.hoopchina.com.cn/images/lrw/manage/userHead.png'} alt=""
+                   className='userHead'/>
             </div>
           }
         />
       ))
+    };
+
+    const renderMakers = () => {
+      return <div className='info-window'>
+        {
+          [
+            <div key='close' className={'close'} onClick={() => this.setState({closeWindow: true})}>
+              <img src={closeimg} alt=""/>
+            </div>,
+
+            infoData && <div key={'info-container'}>
+              <div className='head-border'>
+                <img src={infoData.headImg || 'https://w1.hoopchina.com.cn/images/lrw/manage/userHead.png'} alt=""
+                     className='userHead'/>
+              </div>
+              <div className='btext'>{infoData.name}</div>
+              <div className='tag'>{infoData.tagNames.join()}</div>
+              <div className='text'>声望 7374723 等级 lv.80</div>
+              <div className='text'>24小时带上分</div>
+              <div className='sendBtn'>打招呼(5个虎扑币)</div>
+            </div>
+          ]
+        }
+      </div>
     };
 
     return <div className="container">
@@ -157,7 +181,8 @@ class Components extends Component {
         {...mapConfig}
       >
         <Geolocation {...pluginProps} />
-      {/*
+
+        {/*
         本来想用来展示自己的位置，先用默认的
        <Marker
           position={[sessionStorage.lng, sessionStorage.lat]}
@@ -166,8 +191,7 @@ class Components extends Component {
               <img src={'https://w1.hoopchina.com.cn/images/lrw/manage/userHead.png'} alt="" className='userHead'/>
             </div>
           }
-        />*/
-      }
+        />*/}
 
         {players.length > 0 && addMakers(players)}
 
@@ -176,26 +200,7 @@ class Components extends Component {
           visible={!closeWindow}
           isCustom={true}
         >
-          <div className='info-window'>
-            {
-              [
-                <div key='close' className={'close'} onClick={() => this.setState({closeWindow:true})}>
-                  <img src={closeimg} alt=""/>
-                </div>,
-
-                infoData && <div key={'info-container'}>
-                  <div className='head-border'>
-                    <img src={infoData.headImg||'https://w1.hoopchina.com.cn/images/lrw/manage/userHead.png'} alt="" className='userHead'/>
-                  </div>
-                  <div className='btext'>{infoData.name}</div>
-                  <div className='tag'>{infoData.tagNames.join()}</div>
-                  <div className='text'>声望 7374723 等级 lv.80</div>
-                  <div className='text'>24小时带上分</div>
-                  <div className='sendBtn'>打招呼(5个虎扑币)</div>
-                </div>
-              ]
-            }
-          </div>
+          {renderMakers()}
         </InfoWindow>
       </Map>
     </div>
